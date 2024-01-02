@@ -4,6 +4,7 @@ using Fish_Farm.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Fish_Farm.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20231228112257_update_fishfarmtable")]
+    partial class update_fishfarmtable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -53,7 +56,7 @@ namespace Fish_Farm.Migrations
                     b.Property<bool>("Has_barge")
                         .HasColumnType("bit");
 
-                    b.Property<string>("ImageName")
+                    b.Property<string>("Image")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<double>("Latitude")
@@ -119,29 +122,21 @@ namespace Fish_Farm.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("Age")
+                    b.Property<DateTime?>("EndedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("FishFarm_WorkedId")
                         .HasColumnType("int");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("FishFarmId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ImageName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Position")
                         .HasColumnType("int");
 
+                    b.Property<DateTime?>("StartedOn")
+                        .HasColumnType("datetime2");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("FishFarmId");
+                    b.HasIndex("FishFarm_WorkedId");
 
                     b.ToTable("WorkerTable");
                 });
@@ -155,9 +150,11 @@ namespace Fish_Farm.Migrations
 
             modelBuilder.Entity("Fish_Farm.Entities.Worker", b =>
                 {
-                    b.HasOne("Fish_Farm.Entities.FishFarm", null)
+                    b.HasOne("Fish_Farm.Entities.FishFarm", "FishFarm_Worked")
                         .WithMany("Workers")
-                        .HasForeignKey("FishFarmId");
+                        .HasForeignKey("FishFarm_WorkedId");
+
+                    b.Navigation("FishFarm_Worked");
                 });
 
             modelBuilder.Entity("Fish_Farm.Entities.Client", b =>
