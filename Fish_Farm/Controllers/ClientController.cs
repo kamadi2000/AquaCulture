@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Fish_Farm.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ClientController : ControllerBase
@@ -73,7 +73,18 @@ namespace Fish_Farm.Controllers
                 {
                     Id = x.Id,
                     Name = x.Name,
-                    fishFarms = x.fishFarms
+                    fishFarms = x.fishFarms.Select(x => new FishFarm()
+                    {
+                        Id = x.Id,
+                        Name = x.Name,
+                        Latitude = x.Latitude,
+                        Longitude = x.Longitude,
+                        Num_of_cages = x.Num_of_cages,
+                        Has_barge = x.Has_barge,
+                        ImageName = x.ImageName,
+                        Workers = x.Workers,
+                        ImageSrc = String.Format("{0}://{1}{2}/Images/{3}", Request.Scheme, Request.Host, Request.PathBase, x.ImageName),
+                    }).ToList()
                 })
                 .FirstOrDefaultAsync(c => c.Id == id);
 
@@ -87,12 +98,10 @@ namespace Fish_Farm.Controllers
             }
         }
 
-        [HttpPost("{clientId}")]
+        [HttpPut("{clientId}")]
         public async Task<ActionResult<string>> AddClientFishfarm(int clientId, ClientFishfarm clientFishfarm) 
         {
-            var workerList = await _dataContext.WorkerTable
-                               .Where(worker => clientFishfarm.WorkersIdList.Contains(worker.Id))
-                               .ToListAsync();
+            
             var fishFarm = await _dataContext.FishFarmTable.FindAsync(clientFishfarm.FishFarmId);
             var client = await _dataContext.ClientTable.FindAsync(clientId);
 
@@ -100,33 +109,26 @@ namespace Fish_Farm.Controllers
             {
                 return BadRequest("Fish farm not found");
             }
-            if (fishFarm.Workers == null)
+            var existingWorkers = await _dataContext.WorkerTable
+                    .Where(worker => worker.FishFarmId == clientFishfarm.FishFarmId)
+                    .ToListAsync();
+            foreach (var worker in existingWorkers)
             {
-                fishFarm.Workers = workerList;
+                if (!clientFishfarm.WorkersIdList.Contains(worker.Id))
+                {
+                    worker.FishFarmId = null;
+                }
             }
-            else
-            {
-                var newList = fishFarm.Workers.Concat(workerList).Distinct().ToList();
-                fishFarm.Workers = newList;
-
-            }
-            
-            if (client == null)
-            {
-                return BadRequest("Client not found");
-            }
-            if (client.fishFarms == null)
-            {
-                List<FishFarm> fishFarmList = new List<FishFarm>();
-                fishFarmList.Add(fishFarm);
-                client.fishFarms = fishFarmList; 
-                await _dataContext.SaveChangesAsync();
-                return Ok("Successful");
-
-            }
-            client.fishFarms.Add(fishFarm);
             await _dataContext.SaveChangesAsync();
-            
+            var newWorkerList = await _dataContext.WorkerTable
+                               .Where(worker => clientFishfarm.WorkersIdList.Contains(worker.Id))
+                               .ToListAsync();
+
+            foreach (var worker in newWorkerList)
+            {
+                worker.FishFarmId = clientFishfarm.FishFarmId;
+            }
+            await _dataContext.SaveChangesAsync();           
             return Ok("Successful");
         }
 

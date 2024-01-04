@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Fish_Farm.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class WorkerController : ControllerBase
@@ -20,10 +20,12 @@ namespace Fish_Farm.Controllers
             _dataContext = dataContext;
             _hostEnvironment = hostEnvironment;
         }
-        [HttpGet]
-        public async Task<ActionResult<List<Worker>>> GetWorker()
+
+        [HttpGet("client/{clientId}")]
+        public async Task<ActionResult<List<Worker>>> GetWorker(int clientId)
         {
-            return Ok(await _dataContext.WorkerTable
+            var workers = await _dataContext.WorkerTable
+                .Where(wt => wt.ClientId == clientId)
                 .Select(x => new Worker()
                 {
                     Id = x.Id,
@@ -34,8 +36,10 @@ namespace Fish_Farm.Controllers
                     Position = x.Position,
                     ImageSrc = String.Format("{0}://{1}{2}/Images/{3}", Request.Scheme, Request.Host, Request.PathBase, x.ImageName)
                 })
-                .ToListAsync());
+                .ToListAsync();
+            return Ok(workers) ;
         }
+
         [HttpPost]
         public async Task<ActionResult<Worker>> AddWorker([FromForm]Worker worker)
         {
@@ -47,6 +51,7 @@ namespace Fish_Farm.Controllers
             await _dataContext.SaveChangesAsync();
             return Ok(worker);
         }
+
         [HttpDelete("{id}")]
         public async Task<ActionResult<string>> DeleteWorker(int id)
         {
@@ -59,6 +64,7 @@ namespace Fish_Farm.Controllers
             await _dataContext.SaveChangesAsync();
             return Ok("Successful");
         }
+
         [HttpPut]
         public async Task<ActionResult<Worker>> EditWorker(Worker worker)
         {
@@ -67,7 +73,7 @@ namespace Fish_Farm.Controllers
             {
                 return BadRequest("User not found");
             }
-            if (worker.ImageName != null)
+            if (worker.ImageFile != null)
             {
                user.ImageName = await SaveImage(worker.ImageFile);
             }
@@ -100,6 +106,20 @@ namespace Fish_Farm.Controllers
             }
             return Ok(user);
         }
+        [HttpGet("workers/{clientId}")]
+        public async Task<ActionResult<List<Worker>>> GetUnEmployedWorkers(int clientId)
+        {
+            var unEmployedWorkers = await _dataContext.WorkerTable
+                .Where(x => x.ClientId == clientId)
+                .Where(w => w.FishFarmId == null)
+                .ToListAsync();
+            if (unEmployedWorkers == null)
+            {
+                return Ok(new List<Worker>());
+            }
+            return Ok(unEmployedWorkers);
+        }
+
         [NonAction]
         public async Task<string> SaveImage(IFormFile imageFile)
         {

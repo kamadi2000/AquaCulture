@@ -1,8 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using Fish_Farm.Entities;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Fish_Farm.Entities
+namespace Fish_Farm.DTOs
 {
-    public class Worker
+    public class WorkerDTO
     {
         public int Id { get; set; }
         public string Name { get; set; }
@@ -17,8 +18,5 @@ namespace Fish_Farm.Entities
 
         [NotMapped]
         public string? ImageSrc { get; set; }
-
-        
-
     }
 }

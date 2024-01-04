@@ -17,9 +17,6 @@ namespace Fish_Farm.Entities
         [Required]
         public byte[] PasswordHash { get; set; }
         public byte[] PasswordSalt { get; set; }
-        public string? Image { get; set; }
-        public DateTime? Birthday { get; set; }
-
 
     }
 }

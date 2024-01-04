@@ -9,6 +9,7 @@ namespace Fish_Farm.Entities
 
         public int Id { get; set; }
         public string Name { get; set; }
+        public int? ClientId { get; set; }
         public double Latitude { get; set; }
         public double Longitude { get; set; }
         public int Num_of_cages {  get; set; }

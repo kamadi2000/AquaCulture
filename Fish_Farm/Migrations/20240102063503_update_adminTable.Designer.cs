@@ -4,6 +4,7 @@ using Fish_Farm.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Fish_Farm.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20240102063503_update_adminTable")]
+    partial class update_adminTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -116,9 +119,6 @@ namespace Fish_Farm.Migrations
                     b.Property<int>("Age")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ClientId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -138,8 +138,6 @@ namespace Fish_Farm.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ClientId");
-
                     b.HasIndex("FishFarmId");
 
                     b.ToTable("WorkerTable");
@@ -154,10 +152,6 @@ namespace Fish_Farm.Migrations
 
             modelBuilder.Entity("Fish_Farm.Entities.Worker", b =>
                 {
-                    b.HasOne("Fish_Farm.Entities.Client", null)
-                        .WithMany("Workers")
-                        .HasForeignKey("ClientId");
-
                     b.HasOne("Fish_Farm.Entities.FishFarm", null)
                         .WithMany("Workers")
                         .HasForeignKey("FishFarmId");
@@ -165,8 +159,6 @@ namespace Fish_Farm.Migrations
 
             modelBuilder.Entity("Fish_Farm.Entities.Client", b =>
                 {
-                    b.Navigation("Workers");
-
                     b.Navigation("fishFarms");
                 });
 

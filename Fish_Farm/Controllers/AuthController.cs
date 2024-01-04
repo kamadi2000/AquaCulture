@@ -1,4 +1,5 @@
 ﻿using Fish_Farm.Data;
+using Fish_Farm.DTOs;
 using Fish_Farm.Entities;
 using Fish_Farm.utils;
 using Microsoft.AspNetCore.Authorization;
@@ -24,15 +25,13 @@ namespace Fish_Farm.Controllers
 
 
         [HttpPost("register")]
-        public async Task<ActionResult<User>> Register(User_DTO request)
+        public async Task<ActionResult<User>> Register(UserDTO request)
         {
             CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
             user.Email = request.Email;
             user.PasswordHash = passwordHash;
             user.PasswordSalt = passwordSalt;
             user.Name = request.Name;
-            user.Birthday = request.Birthday;
-            user.Image = request.Image;
             _datacontext.UserTable.Add(user);
             await _datacontext.SaveChangesAsync();
             return Ok(user);

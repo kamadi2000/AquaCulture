@@ -1,6 +1,8 @@
-﻿namespace Fish_Farm.Entities
+﻿using Fish_Farm.Entities;
+
+namespace Fish_Farm.DTOs
 {
-    public class Client
+    public class ClientDTO
     {
         public int Id { get; set; }
         public string Name { get; set; }

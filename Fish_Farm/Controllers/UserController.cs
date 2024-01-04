@@ -1,4 +1,5 @@
 ﻿using Fish_Farm.Data;
+using Fish_Farm.DTOs;
 using Fish_Farm.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -22,7 +23,14 @@ namespace Fish_Farm.Controllers
         [HttpGet]
         public async Task<ActionResult<List<User>>> GetAllUsers()
         {
-            return Ok(await _dataContext.UserTable.ToListAsync());
+            var users = await _dataContext.UserTable
+                .Select(x => new UserDTO
+                {
+                    Name = x.Name,
+                    Email = x.Email,
+                })
+                .ToListAsync();           
+            return Ok(users);
         }
         [HttpPost]
         public async Task<ActionResult<string>> AddUser(User user)
