@@ -9,7 +9,6 @@ namespace Fish_Farm.Entities
     {
 
         public int Id{  get; set; }
-
         [Required]
         public string Name { get; set; }
         [Required]
@@ -17,6 +16,7 @@ namespace Fish_Farm.Entities
         [Required]
         public byte[] PasswordHash { get; set; }
         public byte[] PasswordSalt { get; set; }
+        public ICollection<Client>? Clients { get; set; }
 
     }
 }

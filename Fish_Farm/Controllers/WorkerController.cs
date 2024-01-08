@@ -1,5 +1,6 @@
 ﻿using Fish_Farm.Data;
 using Fish_Farm.Entities;
+using Fish_Farm.Services.WorkerService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -12,127 +13,69 @@ namespace Fish_Farm.Controllers
     [ApiController]
     public class WorkerController : ControllerBase
     {
-        private readonly DataContext _dataContext;
-        private readonly IWebHostEnvironment _hostEnvironment;
+        private readonly IWorkerService _workerService;
 
-        public WorkerController(DataContext dataContext, IWebHostEnvironment hostEnvironment)
+        public WorkerController(IWorkerService workerService)
         {
-            _dataContext = dataContext;
-            _hostEnvironment = hostEnvironment;
+            _workerService = workerService;
         }
 
         [HttpGet("client/{clientId}")]
         public async Task<ActionResult<List<Worker>>> GetWorker(int clientId)
         {
-            var workers = await _dataContext.WorkerTable
-                .Where(wt => wt.ClientId == clientId)
-                .Select(x => new Worker()
-                {
-                    Id = x.Id,
-                    Name = x.Name,
-                    Age = x.Age,
-                    Email = x.Email,
-                    ImageName = x.ImageName,
-                    Position = x.Position,
-                    ImageSrc = String.Format("{0}://{1}{2}/Images/{3}", Request.Scheme, Request.Host, Request.PathBase, x.ImageName)
-                })
-                .ToListAsync();
-            return Ok(workers) ;
+            return await _workerService.GetAllWorkers(clientId, Request);
         }
 
         [HttpPost]
-        public async Task<ActionResult<Worker>> AddWorker([FromForm]Worker worker)
+        public async Task<ActionResult<string>> AddWorker([FromForm]Worker worker)
         {
-            if (worker.ImageName != null)
+            var status =  await _workerService.AddWorker(worker);
+            if (status)
             {
-                worker.ImageName = await SaveImage(worker.ImageFile);
+                return Ok("Successful");
             }
-            _dataContext.WorkerTable.Add(worker);
-            await _dataContext.SaveChangesAsync();
-            return Ok(worker);
+            return BadRequest("Worker not added.");
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult<string>> DeleteWorker(int id)
         {
-            var user = await _dataContext.WorkerTable.FindAsync(id);
-            if (user == null)
+            var status = await _workerService.DeleteWorker(id);
+            if (status) 
             {
-                return BadRequest("User not found");
+                return Ok("Successful");
             }
-            _dataContext.WorkerTable.Remove(user);
-            await _dataContext.SaveChangesAsync();
-            return Ok("Successful");
+            return BadRequest("Worker not deleted.");
         }
 
         [HttpPut]
         public async Task<ActionResult<Worker>> EditWorker(Worker worker)
         {
-            var user = await _dataContext.WorkerTable.FindAsync(worker.Id);
-            if (user == null)
+            var status = await _workerService.EditWorker(worker);
+            if (status)
             {
-                return BadRequest("User not found");
+                return Ok("Successful");
             }
-            if (worker.ImageFile != null)
-            {
-               user.ImageName = await SaveImage(worker.ImageFile);
-            }
-            user.Email = worker.Email;
-            user.Position = worker.Position;
-            user.Age = worker.Age;
-            user.Name = worker.Name;
-            await _dataContext.SaveChangesAsync();
-            return Ok("Successful");
+            return BadRequest("Worker not deleted.");
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Worker>> GetWorkerById(int id)
         {
-            var user = await _dataContext.WorkerTable
-                .Select(x => new Worker()
-                {
-                    Id = x.Id,
-                    Name = x.Name,
-                    Age = x.Age,
-                    Email = x.Email,
-                    ImageName = x.ImageName,
-                    Position = x.Position,
-                    ImageSrc = String.Format("{0}://{1}{2}/Images/{3}", Request.Scheme, Request.Host, Request.PathBase, x.ImageName)
-                })
-                .FirstOrDefaultAsync(x => x.Id == id);
-            if (user == null)
+            var worker = await _workerService.GetWorkerById(id, Request);
+            if (worker  == null)
             {
-                return BadRequest("User not found");
+                return BadRequest("Worker not found.");
             }
-            return Ok(user);
+            return Ok(worker);
         }
         [HttpGet("workers/{clientId}")]
         public async Task<ActionResult<List<Worker>>> GetUnEmployedWorkers(int clientId)
         {
-            var unEmployedWorkers = await _dataContext.WorkerTable
-                .Where(x => x.ClientId == clientId)
-                .Where(w => w.FishFarmId == null)
-                .ToListAsync();
-            if (unEmployedWorkers == null)
-            {
-                return Ok(new List<Worker>());
-            }
-            return Ok(unEmployedWorkers);
+            return await _workerService.GetUnEmployedWorkers(clientId);
         }
 
-        [NonAction]
-        public async Task<string> SaveImage(IFormFile imageFile)
-        {
-            string imageName = new  String(Path.GetFileNameWithoutExtension(imageFile.FileName).Take(10).ToArray()).Replace(' ','-');
-            imageName = imageName+DateTime.Now.ToString("yymmssfff") + Path.GetExtension(imageFile.FileName);
-            var imagePath = Path.Combine(_hostEnvironment.ContentRootPath, "Images", imageName);
-            using (var fileStream = new FileStream(imagePath, FileMode.Create))
-            {
-                await imageFile.CopyToAsync(fileStream);
-            }
-            Console.WriteLine(imageName);
-            return imageName;
-        }
+        
 
     }
 }

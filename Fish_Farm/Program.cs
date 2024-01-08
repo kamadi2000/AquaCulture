@@ -47,8 +47,8 @@ builder.Services.AddScoped<IFishFarmRepository, FishFarmRepository>();
 builder.Services.AddScoped<IFishFarmService, FishFarmService>();
 builder.Services.AddScoped<IClientRepository, ClientRepository>();
 builder.Services.AddScoped<IClientService, ClientService>();
-//builder.Services.AddScoped<IWorkerRepository, WorkerRepository>();
-//builder.Services.AddScoped<IWorkerService, WorkerService>();
+builder.Services.AddScoped<IWorkerRepository, WorkerRepository>();
+builder.Services.AddScoped<IWorkerService, WorkerService>();
 
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

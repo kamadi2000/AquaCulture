@@ -4,6 +4,7 @@
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        public int UserId { get; set; }
         public ICollection<FishFarm>? fishFarms { get; set; }
         public ICollection<Worker>? Workers { get; set; }
     }

@@ -14,30 +14,39 @@ namespace Fish_Farm.Services.ClientService
             _clientRepository = clientRepository;
         }
 
-        public async Task<HttpStatusCode> AddClient(Client client)
+        public async Task<Boolean> AddClient(AddClientDTO client)
         {
             return await _clientRepository.AddClient(client);
         }
 
-        public async Task<HttpStatusCode> DeleteClient(int clientId)
+        public async Task<Boolean> DeleteClient(int clientId)
         {
             return await _clientRepository.DeleteClient(clientId);
         }
 
-        public Task<HttpStatusCode> EditClient(Client client)
+        public Task<Boolean> EditClient(Client client)
         {
             return _clientRepository.EditClient(client);
         }
 
-        public async Task<List<GetClientDTO>> GetAll(HttpRequest request)
+        public Task<bool> ManageClientFishfarm(int clientId, ClientFishfarm clientFishfarm)
         {
-            var clients = await _clientRepository.GetAll(request);
+            return _clientRepository.ManageClientFishfarm(clientId, clientFishfarm);
+        }
+
+        public async Task<List<GetClientDTO>> GetAll(HttpRequest request, String email)
+        {
+            var clients = await _clientRepository.GetAll(request,email);
             return clients.Select(x => new GetClientDTO()
             {
                 Id = x.Id,
                 Name = x.Name,
             })
             .ToList();
+        }
+        public async Task<Client?> GetClientById(HttpRequest request,int clientId)
+        {
+            return await _clientRepository.GetClientById(request,clientId);
         }
     }
 }

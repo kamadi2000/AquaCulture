@@ -7,9 +7,11 @@ namespace Fish_Farm.Services.ClientService
 {
     public interface IClientService
     {
-        Task<List<GetClientDTO>> GetAll(HttpRequest request);
-        Task<HttpStatusCode> AddClient(Client client);
-        Task<HttpStatusCode> DeleteClient(int clientId);
-        Task<HttpStatusCode> EditClient(Client client);
+        Task<List<GetClientDTO>> GetAll(HttpRequest request, String email);
+        Task<Boolean> AddClient(AddClientDTO client);
+        Task<Boolean> DeleteClient(int clientId);
+        Task<Boolean> EditClient(Client client);
+        Task<Client?> GetClientById(HttpRequest request,int clientId);
+        Task<Boolean> ManageClientFishfarm(int client, ClientFishfarm clientFishfarm);
     }
 }

@@ -31,10 +31,34 @@ namespace Fish_Farm.Services.FishFarmService
                 ClientId = x.ClientId,
             }).ToList();     
         }
-        public async Task<HttpStatusCode> AddFishFarm(FishFarmDTO fishFarmDTO)
+        public async Task<bool> AddFishFarm(FishFarmDTO fishFarmDTO)
         {
             return await _repository.AddFishFarm(fishFarmDTO);
         }
 
+        public async Task<bool> DeleteFishfarm(int id)
+        {
+            return await _repository.DeleteFishfarm(id);
+        }
+
+        public async Task<FishFarm?> GetFishFarmById(HttpRequest request,int id)
+        {
+            return await _repository.GetFishFarmById(request, id);
+        }
+
+        public async Task<bool> EditFishfarm(FishFarm fishFarm)
+        {
+            return await _repository.EditFishfarm(fishFarm);
+        }
+
+        public async Task<bool> AddClientFishfarm(int clientId, FishFarm fishfarm)
+        {
+            return await _repository.AddClientFishfarm(clientId, fishfarm);
+        }
+
+        public async Task<List<Worker>?> GetFishfarmWorkers(int fishfarmId)
+        {
+            return await _repository.GetFishfarmWorkers(fishfarmId);
+        }
     }
 }
