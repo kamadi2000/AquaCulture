@@ -1,5 +1,9 @@
-﻿using Fish_Farm.Data;
+﻿using Azure.Core;
+using Fish_Farm.Data;
+using Fish_Farm.DTOs;
+using Fish_Farm.DTOs.ClientDTOs;
 using Fish_Farm.Entities;
+using Fish_Farm.Services.ClientService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -13,55 +17,51 @@ namespace Fish_Farm.Controllers
     public class ClientController : ControllerBase
     {
         private readonly DataContext _dataContext;
+        private readonly IClientService _clientService;
 
-        public ClientController(DataContext dataContext)
+        public ClientController(DataContext dataContext, IClientService clientService)
         {
             _dataContext = dataContext;
+            _clientService = clientService;
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Client>>> GetAlClients()
+        public async Task<ActionResult<List<GetClientDTO>>> GetAlClients()
         {
-            var clients = await _dataContext.ClientTable
-                .Include(client => client.fishFarms)
-                .ToListAsync();
-            return Ok(clients);
+            return Ok(await _clientService.GetAll(Request));
             
         }
         [HttpPost]
         public async Task<ActionResult<string>> AddUser(Client client)
         {
-            _dataContext.ClientTable.Add(client);
-            await _dataContext.SaveChangesAsync();
-            return Ok("Successful");
+            var status = await _clientService.AddClient(client);
+            if (status == System.Net.HttpStatusCode.OK)
+            {
+                return Ok("Successful");
+            }
+            return BadRequest(status);
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult<string>> DeleteClient(int id)
         {
-            var client = await _dataContext.ClientTable.FindAsync(id);
-            if (client == null)
+            var status = await _clientService.DeleteClient(id);
+            if (status == System.Net.HttpStatusCode.OK)
             {
-                return BadRequest("User not found");
+                return Ok("Successful");
             }
-            _dataContext.ClientTable.Remove(client);
-            await _dataContext.SaveChangesAsync();
-            return Ok("Successful");
+            return BadRequest(status);
         }
 
         [HttpPut]
-        public async Task<ActionResult<Client>> EditClient(Client newClient)
+        public async Task<ActionResult<string>> EditClient(Client newClient)
         {
-            var client = await _dataContext.ClientTable
-                .Include(client => client.fishFarms)
-                .FirstOrDefaultAsync(f => f.Id == newClient.Id);
-            if (client == null)
+            var status = await _clientService.EditClient(newClient);
+            if (status == System.Net.HttpStatusCode.OK)
             {
-                return BadRequest("User not found");
+                return Ok("Successful");
             }
-
-            return Ok(client);
-
+            return BadRequest(status);
         }
 
         [HttpGet("{id}")]
@@ -86,15 +86,15 @@ namespace Fish_Farm.Controllers
                         ImageSrc = String.Format("{0}://{1}{2}/Images/{3}", Request.Scheme, Request.Host, Request.PathBase, x.ImageName),
                     }).ToList()
                 })
-                .FirstOrDefaultAsync(c => c.Id == id);
+            .FirstOrDefaultAsync(c => c.Id == id);
 
             if (client == null)
             {
-                return BadRequest("User not found");
+                return BadRequest("Client not found");
             }
             else
             {
-                return Ok(client);
+                return client;
             }
         }
 
