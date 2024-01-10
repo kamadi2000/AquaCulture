@@ -46,7 +46,7 @@ namespace Fish_Farm.Services.FishFarmService
             return await _repository.GetFishFarmById(request, id);
         }
 
-        public async Task<bool> EditFishfarm(FishFarm fishFarm)
+        public async Task<bool> EditFishfarm(FishFarmDTO fishFarm)
         {
             return await _repository.EditFishfarm(fishFarm);
         }

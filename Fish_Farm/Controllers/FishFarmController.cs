@@ -1,16 +1,12 @@
-﻿using Fish_Farm.Data;
-using Fish_Farm.DTOs;
+﻿using Fish_Farm.DTOs;
 using Fish_Farm.Entities;
 using Fish_Farm.Services.FishFarmService;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Hosting;
 
 namespace Fish_Farm.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "ClientAdmin")]
     [Route("api/[controller]")]
     [ApiController]
     public class FishFarmController : ControllerBase
@@ -51,7 +47,7 @@ namespace Fish_Farm.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult<string>> EditFishFarm(FishFarm fishFarm)
+        public async Task<ActionResult<string>> EditFishFarm(FishFarmDTO fishFarm)
         {
             var status = await _fishFarmService.EditFishfarm(fishFarm);
             if (status)

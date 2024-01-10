@@ -106,7 +106,7 @@ namespace Fish_Farm.Repositories.FishFarmRepository
             }
         }
 
-        public async Task<bool> EditFishfarm(FishFarm fishFarm)
+        public async Task<bool> EditFishfarm(FishFarmDTO fishFarm)
         {
             var farm = await _dataContext.FishFarmTable.FindAsync(fishFarm.Id);
             if (farm == null)

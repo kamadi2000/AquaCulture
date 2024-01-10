@@ -10,7 +10,7 @@ namespace Fish_Farm.Services.FishFarmService
         Task<bool> AddFishFarm(FishFarmDTO fishFarmDTO);
         Task<bool> DeleteFishfarm(int id);
         Task<FishFarm?> GetFishFarmById(HttpRequest request,int id);
-        Task<bool> EditFishfarm(FishFarm fishFarm);
+        Task<bool> EditFishfarm(FishFarmDTO fishFarm);
         Task<bool> AddClientFishfarm(int clientId, FishFarm fihsfarm);
         Task<ICollection<Worker>> GetFishfarmWorkers(int fishfarmId);
     }
