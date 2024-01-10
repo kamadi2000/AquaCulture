@@ -23,7 +23,6 @@ namespace Fish_Farm.Controllers
             _config = config;
         }
 
-
         [HttpPost("register")]
         public async Task<ActionResult<User>> Register(UserDTO request)
         {
@@ -32,6 +31,7 @@ namespace Fish_Farm.Controllers
             user.PasswordHash = passwordHash;
             user.PasswordSalt = passwordSalt;
             user.Name = request.Name;
+            user.Role = request.Role;
             _datacontext.UserTable.Add(user);
             await _datacontext.SaveChangesAsync();
             return Ok(user);
@@ -53,7 +53,7 @@ namespace Fish_Farm.Controllers
             }
             else if (VerifyPasswordHash(credentials.Password, usr_db.PasswordHash, usr_db.PasswordSalt)) 
             {
-                var token = tokenGenerator.GenerateToken(usr_db.Name, credentials.Email); 
+                var token = tokenGenerator.GenerateToken(usr_db.Name, credentials.Email, usr_db.Role); 
                 return Ok(token);
             }
             return BadRequest("Invalid Credentials");

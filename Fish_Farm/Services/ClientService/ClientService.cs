@@ -41,6 +41,7 @@ namespace Fish_Farm.Services.ClientService
             {
                 Id = x.Id,
                 Name = x.Name,
+                ClientEmail = x.ClientEmail,
             })
             .ToList();
         }

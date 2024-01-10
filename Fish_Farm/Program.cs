@@ -2,9 +2,11 @@ using Fish_Farm.Data;
 using Fish_Farm.Entities;
 using Fish_Farm.Repositories.ClientRepository;
 using Fish_Farm.Repositories.FishFarmRepository;
+using Fish_Farm.Repositories.UserRepository;
 using Fish_Farm.Repositories.WorkerRepository;
 using Fish_Farm.Services.ClientService;
 using Fish_Farm.Services.FishFarmService;
+using Fish_Farm.Services.UserService;
 using Fish_Farm.Services.WorkerService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -49,7 +51,8 @@ builder.Services.AddScoped<IClientRepository, ClientRepository>();
 builder.Services.AddScoped<IClientService, ClientService>();
 builder.Services.AddScoped<IWorkerRepository, WorkerRepository>();
 builder.Services.AddScoped<IWorkerService, WorkerService>();
-
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

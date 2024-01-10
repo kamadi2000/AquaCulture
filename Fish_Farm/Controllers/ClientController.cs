@@ -14,7 +14,7 @@ using System.Security.Principal;
 
 namespace Fish_Farm.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "ClientAdmin")]
     [Route("api/[controller]")]
     [ApiController]
     public class ClientController : ControllerBase

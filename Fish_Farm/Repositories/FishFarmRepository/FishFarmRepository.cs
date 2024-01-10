@@ -153,21 +153,13 @@ namespace Fish_Farm.Repositories.FishFarmRepository
             return true;
         }
 
-        public async Task<List<Worker>?> GetFishfarmWorkers(int fishfarmId)
+        public async Task<ICollection<Worker>> GetFishfarmWorkers(int fishfarmId)
         {
             var fishfarm = await _dataContext.FishFarmTable
                 .Include(ft => ft.Workers)
                 .FirstOrDefaultAsync(ft => ft.Id == fishfarmId);
-            if (fishfarm == null)
-            {
-                return null;
-            }
-            var fishfarmWorkers = fishfarm.Workers;
-            if (fishfarmWorkers == null)
-            {
-                return new List<Worker>();
-            }
-            return (List<Worker>)fishfarmWorkers;
+    
+            return fishfarm.Workers;
         }
 
         [NonAction]

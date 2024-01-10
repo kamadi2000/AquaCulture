@@ -14,7 +14,7 @@ namespace Fish_Farm.utils
         {
             _config = config;
         }
-        public string GenerateToken(string name, string email)
+        public string GenerateToken(string name, string email,string role)
         {
 
             var issuer = _config["JWT:Issuer"];
@@ -27,6 +27,7 @@ namespace Fish_Farm.utils
 
                     new Claim(JwtRegisteredClaimNames.Sub,name),
                     new Claim(JwtRegisteredClaimNames.Email,email),
+                    new Claim(ClaimTypes.Role,role)
 
              });
             var expires = DateTime.UtcNow.AddMinutes(120);

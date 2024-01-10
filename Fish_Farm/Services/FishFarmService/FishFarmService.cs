@@ -56,7 +56,7 @@ namespace Fish_Farm.Services.FishFarmService
             return await _repository.AddClientFishfarm(clientId, fishfarm);
         }
 
-        public async Task<List<Worker>?> GetFishfarmWorkers(int fishfarmId)
+        public async Task<ICollection<Worker>> GetFishfarmWorkers(int fishfarmId)
         {
             return await _repository.GetFishfarmWorkers(fishfarmId);
         }

@@ -29,7 +29,8 @@ namespace Fish_Farm.Repositories.ClientRepository
             _dataContext.ClientTable.Add(new Client
             {
                 Name = client.Name,
-                UserId = usr_db.Id
+                UserId = usr_db.Id,
+                ClientEmail = client.ClientEmail
             });
             await _dataContext.SaveChangesAsync();
             return (true);

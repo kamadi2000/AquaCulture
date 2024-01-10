@@ -1,6 +1,7 @@
 ﻿using Fish_Farm.Data;
 using Fish_Farm.DTOs;
 using Fish_Farm.Entities;
+using Fish_Farm.Services.UserService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -8,29 +9,24 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Fish_Farm.Controllers
 {
-    [Authorize]
+    [Authorize(Roles ="Admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class UserController : ControllerBase
     {
         private readonly DataContext _dataContext;
+        private readonly IUserService _userService;
 
-        public UserController(DataContext dataContext)
+        public UserController(DataContext dataContext,IUserService userService)
         {
             _dataContext = dataContext;
+            _userService = userService;
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<User>>> GetAllUsers()
+        public async Task<ActionResult<List<UserDTO>>> GetAllUsers()
         {
-            var users = await _dataContext.UserTable
-                .Select(x => new UserDTO
-                {
-                    Name = x.Name,
-                    Email = x.Email,
-                })
-                .ToListAsync();           
-            return Ok(users);
+            return await _userService.GetAll();
         }
         [HttpPost]
         public async Task<ActionResult<string>> AddUser(User user)
@@ -40,18 +36,16 @@ namespace Fish_Farm.Controllers
             return Ok("Successful");
         }
 
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public async Task<ActionResult<string>> DeleteUser(int id)
         {
-            var user  = await _dataContext.UserTable.FindAsync(id);
-            if (user == null)
-            {
-                return BadRequest("User not found");
-            }
-            else
+            var user  = await _userService.DeleteUser(id);
+            if (user)
             {
                 return Ok("Successful");
             }
+            return BadRequest("User not found");
+
         }
 
         [HttpPut]

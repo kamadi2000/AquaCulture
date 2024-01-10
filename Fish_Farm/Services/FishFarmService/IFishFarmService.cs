@@ -12,6 +12,6 @@ namespace Fish_Farm.Services.FishFarmService
         Task<FishFarm?> GetFishFarmById(HttpRequest request,int id);
         Task<bool> EditFishfarm(FishFarm fishFarm);
         Task<bool> AddClientFishfarm(int clientId, FishFarm fihsfarm);
-        Task<List<Worker>?> GetFishfarmWorkers(int fishfarmId);
+        Task<ICollection<Worker>> GetFishfarmWorkers(int fishfarmId);
     }
 }

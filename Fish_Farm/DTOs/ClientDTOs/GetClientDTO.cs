@@ -6,5 +6,6 @@ namespace Fish_Farm.DTOs.ClientDTOs
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        public string? ClientEmail {  get; set; }
     }
 }
