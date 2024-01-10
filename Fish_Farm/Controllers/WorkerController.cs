@@ -1,4 +1,5 @@
 ﻿using Fish_Farm.Data;
+using Fish_Farm.DTOs;
 using Fish_Farm.Entities;
 using Fish_Farm.Services.WorkerService;
 using Microsoft.AspNetCore.Authorization;
@@ -27,7 +28,7 @@ namespace Fish_Farm.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<string>> AddWorker([FromForm]Worker worker)
+        public async Task<ActionResult<string>> AddWorker([FromForm]WorkerDTO worker)
         {
             var status =  await _workerService.AddWorker(worker);
             if (status)

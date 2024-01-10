@@ -68,13 +68,13 @@ namespace Fish_Farm.Controllers
             return Ok(fishfarm);
         }
 
-        [HttpPost("{clientId}")]
-        public async Task<ActionResult<string>> AddClientFishfarm(int id, FishFarm fishFarm)
-        {
-            var status = await _fishFarmService.AddClientFishfarm(id, fishFarm);
-            if (status) { return Ok("Successful"); }
-            return BadRequest("Client fish farm not added.");
-        }
+        //[HttpPost("{clientId}")]
+        //public async Task<ActionResult<string>> AddClientFishfarm(int id, FishFarm fishFarm)
+        //{
+        //    var status = await _fishFarmService.AddClientFishfarm(id, fishFarm);
+        //    if (status) { return Ok("Successful"); }
+        //    return BadRequest("Client fish farm not added.");
+        //}
 
         [HttpGet("clientFishFarms/{fishfarmId}")]
         public async Task<ActionResult<List<Worker>>> GetFishFarmWorkers(int fishfarmId)

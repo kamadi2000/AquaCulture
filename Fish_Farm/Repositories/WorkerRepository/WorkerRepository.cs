@@ -1,5 +1,6 @@
 ﻿using Azure.Core;
 using Fish_Farm.Data;
+using Fish_Farm.DTOs;
 using Fish_Farm.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -18,13 +19,23 @@ namespace Fish_Farm.Repositories.WorkerRepository
             _hostEnvironment = hostEnvironment;
         }
 
-        public async Task<bool> AddWorker(Worker worker)
+        public async Task<bool> AddWorker(WorkerDTO worker)
         {
             if (worker.ImageFile != null)
             {
                 worker.ImageName = await SaveImage(worker.ImageFile);
             }
-            _dataContext.WorkerTable.Add(worker);
+            _dataContext.WorkerTable.Add(new Worker
+            {
+                Name = worker.Name,
+                Age = worker.Age,
+                Position = worker.Position,
+                ImageFile = worker.ImageFile,
+                ImageName = worker.ImageName,
+                Email = worker.Email,
+                ClientId = worker.ClientId,
+
+            });
             await _dataContext.SaveChangesAsync();
             return true;
         }

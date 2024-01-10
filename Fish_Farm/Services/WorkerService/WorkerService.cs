@@ -1,4 +1,5 @@
-﻿using Fish_Farm.Entities;
+﻿using Fish_Farm.DTOs;
+using Fish_Farm.Entities;
 using Fish_Farm.Repositories.WorkerRepository;
 
 namespace Fish_Farm.Services.WorkerService
@@ -11,7 +12,7 @@ namespace Fish_Farm.Services.WorkerService
             _workerRepository = workerRepository;
 
         }
-        public async Task<bool> AddWorker(Worker worker)
+        public async Task<bool> AddWorker(WorkerDTO worker)
         {
             return await _workerRepository.AddWorker(worker);
         }
